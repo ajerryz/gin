@@ -91,8 +91,10 @@ const (
 
 // Engine is the framework's instance, it contains the muxer, middleware and configuration settings.
 // Create an instance of Engine, by using New() or Default()
+// Engine 是框架的实例，包含了muxer,中间件和配置。创建Engine可以使用New()或Default()方法
+// Engine 实现了	IRouter接口和 net/http 包中的Handler接口
 type Engine struct {
-	RouterGroup
+	RouterGroup // 路由组结构体
 
 	// RedirectTrailingSlash enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
@@ -223,10 +225,11 @@ func New(opts ...OptionFunc) *Engine {
 }
 
 // Default returns an Engine instance with the Logger and Recovery middleware already attached.
+// 返回默认的Engine
 func Default(opts ...OptionFunc) *Engine {
-	debugPrintWARNINGDefault()
-	engine := New()
-	engine.Use(Logger(), Recovery())
+	debugPrintWARNINGDefault()       // 打印golang min版本的支持警告日志
+	engine := New()                  // 创建Engine实例
+	engine.Use(Logger(), Recovery()) // attached默认的Logger 和 Recovery 中间件
 	return engine.With(opts...)
 }
 
@@ -522,9 +525,9 @@ func (engine *Engine) Run(addr ...string) (err error) {
 			"Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.")
 	}
 	engine.updateRouteTrees()
-	address := resolveAddress(addr)
+	address := resolveAddress(addr) // 解析监听地址
 	debugPrint("Listening and serving HTTP on %s\n", address)
-	err = http.ListenAndServe(address, engine.Handler())
+	err = http.ListenAndServe(address, engine.Handler()) // http包执行监听
 	return
 }
 
@@ -621,6 +624,7 @@ func (engine *Engine) RunListener(listener net.Listener) (err error) {
 }
 
 // ServeHTTP conforms to the http.Handler interface.
+// 该方法实现了 http包下的Handler接口，实现了ServeHTTP方法
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := engine.pool.Get().(*Context)
 	c.writermem.reset(w)

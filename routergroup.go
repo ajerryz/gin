@@ -24,12 +24,14 @@ var (
 )
 
 // IRouter defines all router handle interface includes single and group router.
+// IRouter 定义所有路由处理器接口，包括单个的和路由组
 type IRouter interface {
 	IRoutes
-	Group(string, ...HandlerFunc) *RouterGroup
+	Group(string, ...HandlerFunc) *RouterGroup // 路由组
 }
 
 // IRoutes defines all router handle interface.
+// 定义所有路由处理器接口
 type IRoutes interface {
 	Use(...HandlerFunc) IRoutes
 
