@@ -55,7 +55,7 @@ type IRoutes interface {
 // RouterGroup is used internally to configure router, a RouterGroup is associated with
 // a prefix and an array of handlers (middleware).
 type RouterGroup struct {
-	Handlers HandlersChain
+	Handlers HandlersChain // []HandlerFunc
 	basePath string
 	engine   *Engine
 	root     bool
@@ -64,6 +64,7 @@ type RouterGroup struct {
 var _ IRouter = (*RouterGroup)(nil)
 
 // Use adds middleware to the group, see example code in GitHub.
+// 添加 Middleware
 func (group *RouterGroup) Use(middleware ...HandlerFunc) IRoutes {
 	group.Handlers = append(group.Handlers, middleware...)
 	return group.returnObj()
@@ -85,10 +86,11 @@ func (group *RouterGroup) BasePath() string {
 	return group.basePath
 }
 
+// handle engine 通过 RouterGroup 或 Handle 最终调用的方法
 func (group *RouterGroup) handle(httpMethod, relativePath string, handlers HandlersChain) IRoutes {
-	absolutePath := group.calculateAbsolutePath(relativePath)
-	handlers = group.combineHandlers(handlers)
-	group.engine.addRoute(httpMethod, absolutePath, handlers)
+	absolutePath := group.calculateAbsolutePath(relativePath) // 计算URL绝对路径
+	handlers = group.combineHandlers(handlers)                // 将当前传入的handlers和当前RouterGroup已有的handlers进行合并
+	group.engine.addRoute(httpMethod, absolutePath, handlers) // 最终使用engine添加路由
 	return group.returnObj()
 }
 

@@ -67,6 +67,7 @@ func (c HandlersChain) Last() HandlerFunc {
 }
 
 // RouteInfo represents a request route's specification which contains method and path and its handler.
+// RouteInfo 表示请求路由的规范，其中包含方法和路径及其处理程序。
 type RouteInfo struct {
 	Method      string
 	Path        string
@@ -75,6 +76,7 @@ type RouteInfo struct {
 }
 
 // RoutesInfo defines a RouteInfo slice.
+// RoutesInfo 定义一个 RouteInfo 切片。
 type RoutesInfo []RouteInfo
 
 // Trusted platforms
@@ -217,11 +219,12 @@ func New(opts ...OptionFunc) *Engine {
 		trustedProxies:         []string{"0.0.0.0/0", "::/0"},
 		trustedCIDRs:           defaultTrustedCIDRs,
 	}
-	engine.RouterGroup.engine = engine
+	engine.RouterGroup.engine = engine // RouterGroup的engine字段设置当前engine
+	// 设置 context 的sync.Pool 的 New
 	engine.pool.New = func() any {
 		return engine.allocateContext(engine.maxParams)
 	}
-	return engine.With(opts...)
+	return engine.With(opts...) // 执行每个engine opt函数后直接返回当前engine实例的地址
 }
 
 // Default returns an Engine instance with the Logger and Recovery middleware already attached.
@@ -341,12 +344,13 @@ func (engine *Engine) rebuild405Handlers() {
 	engine.allNoMethod = engine.combineHandlers(engine.noMethod)
 }
 
+// addRoute 添加路由
 func (engine *Engine) addRoute(method, path string, handlers HandlersChain) {
 	assert1(path[0] == '/', "path must begin with '/'")
 	assert1(method != "", "HTTP method can not be empty")
 	assert1(len(handlers) > 0, "there must be at least one handler")
 
-	debugPrintRoute(method, path, handlers)
+	debugPrintRoute(method, path, handlers) // debug模式，打印Route信息
 
 	root := engine.trees.get(method)
 	if root == nil {
