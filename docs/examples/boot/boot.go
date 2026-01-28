@@ -3,7 +3,7 @@ package boot
 import (
 	"flag"
 
-	"github.com/gin-gonic/gin/examples/routes"
+	"github.com/gin-gonic/gin/docs/examples/routes"
 )
 
 func Main() {

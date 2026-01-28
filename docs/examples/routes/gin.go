@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/examples/config"
+	"github.com/gin-gonic/gin/docs/examples/config"
 )
 
 var defaultGinEngine *gin.Engine
