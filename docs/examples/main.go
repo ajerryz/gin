@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin/docs/examples/boot"
+	"github.com/gin-gonic/gin/docs/examples/router"
 )
 
 func main() {
-	boot.Main()
+	router.Main()
 }
